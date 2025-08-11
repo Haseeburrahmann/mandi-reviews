@@ -16,10 +16,56 @@ export default function ReviewForm() {
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Enhanced email validation
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const allowedDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com', 'live.com', 'msn.com', 'ymail.com', 'rocketmail.com']
+    
+    if (!email) {
+      return 'Email is required'
+    }
+    
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address'
+    }
+    
+    const domain = email.split('@')[1]?.toLowerCase()
+    if (!allowedDomains.includes(domain)) {
+      return 'Please use a valid email provider (Gmail, Yahoo, Outlook, etc.)'
+    }
+    
+    return null
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
     setErrors({})
+
+    // Client-side validation
+    const newErrors = {}
+    
+    // Email validation
+    const emailError = validateEmail(formData.email)
+    if (emailError) {
+      newErrors.email = emailError
+    }
+    
+    // Rating validation
+    if (formData.rating === 0) {
+      newErrors.rating = 'Please select a rating'
+    }
+    
+    // Feedback validation
+    if (!formData.feedback.trim() || formData.feedback.trim().length < 5) {
+      newErrors.feedback = 'Please share what you liked (minimum 5 characters)'
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      setIsSubmitting(false)
+      return
+    }
 
     try {
       const response = await fetch('/api/reviews', {
@@ -67,7 +113,7 @@ export default function ReviewForm() {
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white text-center">
-          <h1 className="text-2xl font-bold mb-2">🍛 Rate Your Mandi</h1>
+          <h1 className="text-2xl font-bold mb-2">🍽️ Rate Your Food</h1>
           <p className="text-orange-100">We value your feedback!</p>
         </div>
 
@@ -88,16 +134,19 @@ export default function ReviewForm() {
             <input
               type="email"
               required
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
-                errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-500 ${
+                errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
               }`}
-              placeholder="your.email@example.com"
+              placeholder="your.email@gmail.com"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
             />
             {errors.email && (
               <p className="text-red-500 text-sm mt-1">{errors.email}</p>
             )}
+            <p className="text-xs text-gray-500 mt-1">
+              We accept Gmail, Yahoo, Outlook, and other major email providers
+            </p>
           </div>
 
           {/* Rating */}
@@ -122,8 +171,8 @@ export default function ReviewForm() {
             <textarea
               required
               rows={3}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none ${
-                errors.feedback ? 'border-red-500 bg-red-50' : 'border-gray-300'
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none text-gray-900 placeholder-gray-500 ${
+                errors.feedback ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
               }`}
               placeholder="Tell us about the taste, portion size, packaging..."
               value={formData.feedback}
@@ -141,7 +190,7 @@ export default function ReviewForm() {
             </label>
             <textarea
               rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none"
+              className="w-full px-4 py-3 border border-gray-300 bg-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none text-gray-900 placeholder-gray-500"
               placeholder="Any suggestions for improvement..."
               value={formData.improvements}
               onChange={(e) => handleInputChange('improvements', e.target.value)}

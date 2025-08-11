@@ -39,13 +39,13 @@ export default function ThankYouPage() {
         <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-orange-800">
             <strong>📱 Stay Connected</strong><br/>
-            WhatsApp: <span className="font-mono font-semibold">+1234567890</span><br/>
+            WhatsApp: <span className="font-mono font-semibold">716-544-4506</span><br/>
             <span className="text-xs">For orders and updates</span>
           </p>
           <div className="mt-2 pt-2 border-t border-orange-200">
             <p className="text-sm text-orange-700">
               🕌 <strong>See you next Friday!</strong><br/>
-              <span className="text-xs">Fresh mandi every week</span>
+              <span className="text-xs">Fresh food every week</span>
             </p>
           </div>
         </div>
